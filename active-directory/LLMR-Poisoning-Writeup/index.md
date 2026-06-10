@@ -1,10 +1,3 @@
----
-title: "LLMNR & NBT-NS Poisoning"
-date: 2026-06-10
-tags: ["active-directory", "ntlm", "llmnr", "responder", "hashcat", "offensive-security"]
-categories: ["Active Directory Attacks"]
----
-
 ## NTLM Authentication
 
 Before diving into the attack, we need to understand how NTLM authentication works:
@@ -25,7 +18,7 @@ Cliente                    Servidor
 
 The client sends a `NEGOTIATE` message to the server to agree on the authentication version (`NTLMv1` / `NTLMv2`). The server responds with a `CHALLENGE` (a random nonce), and the client must encrypt that challenge using its **NT Hash**. The operation looks like this:
 
-```
+```c
 hash   = MD4(Client_Password)
 result = HMAC-MD5(hash, server_challenge + client_challenge + timestamp + ...)
 ```
@@ -49,7 +42,7 @@ These protocols essentially broadcast to the entire local network: *"Does anyone
 
 **Normal flow (no attacker):**
 
-```
+```c
 Client
    |
    |--- DNS Query ---> DNS Server
@@ -66,7 +59,7 @@ Client
 
 **Attack flow:**
 
-```
+```c
 Victim
    |
    |--- DNS Query
@@ -127,7 +120,7 @@ The same attack works against any domain user. Here, the `s.vim` account trigger
 
 Now we attempt to crack the captured hash offline using `Hashcat` with module `5600` (NetNTLMv2):
 
-```bash
+```c
 hashcat -m 5600 hashNTLMv2 /usr/share/seclists/rockyou.txt
 ```
 
@@ -147,7 +140,7 @@ The password `snake123` was cracked in under **1 second** using `rockyou.txt`. T
 
 Via Group Policy:
 
-```
+```c
 Computer Configuration
 → Administrative Templates
 → Network → DNS Client
